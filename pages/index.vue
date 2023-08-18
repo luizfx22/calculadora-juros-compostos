@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import axios from "axios";
+import anime from "animejs";
 import { parseCurrency, formatCurrency } from "@brazilian-utils/brazilian-utils";
 
 useHead({
@@ -143,6 +144,27 @@ onMounted(async () => {
 	formCalculadora.aportesMes = "0.00";
 });
 
+// Anime js values animation from result (getting the last value)
+const animated = reactive({
+	totalInvestido: 0,
+	totalJuros: 0,
+	totalAcumulado: 0,
+});
+watch(
+	() => result.value[result.value.length - 1],
+	(newValue) => {
+		anime({
+			targets: animated,
+			totalInvestido: newValue.totalInvestido,
+			totalJuros: newValue.totalJuros,
+			totalAcumulado: newValue.totalAcumulado,
+			duration: 1500,
+			easing: "easeOutExpo",
+		});
+	},
+	{ deep: true }
+);
+
 //
 </script>
 
@@ -150,6 +172,10 @@ onMounted(async () => {
 	<div class="container mx-auto p-5">
 		<!-- Fields to calculate -->
 		<div class="p-4 bg-[#293441] rounded-md shadow-md grid grid-cols-5 gap-4">
+			<div class="col-span-5">
+				<h1 class="text-xl text-white">Calculadora de Juros Compostos</h1>
+			</div>
+
 			<div class="flex flex-col gap-2 col-span-3 md:col-span-2 lg:col-span-1">
 				<label for="vrInicial">Valor inicial</label>
 				<CurrencyInput class="input input-bordered w-full" v-model="formCalculadora.vrInicial" />
@@ -166,7 +192,7 @@ onMounted(async () => {
 			</div>
 
 			<div class="flex flex-col gap-2 col-span-5 md:col-span-2 lg:col-span-1">
-				<label for="jurosMes">Taxas padrão</label>
+				<label for="jurosMes">Taxa de juros (predefinição)</label>
 				<select class="select select-bordered w-full" v-model="jurosSelect">
 					<option value="0.0" selected disabled>Selecione uma</option>
 					<option v-for="(taxa, o) in taxas" :key="o" :value="taxa.valor">{{ taxa.nome }}</option>
@@ -184,15 +210,33 @@ onMounted(async () => {
 			</div>
 		</div>
 
+		<!-- Totals fields -->
+		<div class="py-4 px-4 bg-[#293441] rounded-md shadow-md grid grid-cols-3 gap-4 mt-4">
+			<div class="flex flex-col mb-4 md:mb-0 col-span-3 md:col-span-1">
+				<p>Valor investido</p>
+				<h1 class="text-2xl text-white">R$ {{ formatCurrency(animated.totalInvestido) }}</h1>
+			</div>
+
+			<div class="flex flex-col mb-4 md:mb-0 col-span-3 md:col-span-1">
+				<p>Total juros</p>
+				<h1 class="text-2xl text-white">R$ {{ formatCurrency(animated.totalJuros) }}</h1>
+			</div>
+
+			<div class="flex flex-col col-span-3 md:col-span-1">
+				<p>Total acumulado</p>
+				<h1 class="text-2xl text-white">R$ {{ formatCurrency(animated.totalAcumulado) }}</h1>
+			</div>
+		</div>
+
 		<!-- A flex container with two columns that wrap when mobile -->
-		<div class="flex flex-col md:flex-row gap-4 mt-4">
+		<div class="grid grid-cols-4 gap-4 mt-4">
 			<!-- Chart -->
-			<div class="rounded-md shadow-md p-2 bg-[#293441] flex flex-col md:flex-row gap-4 md:w-1/2">
+			<div class="rounded-md shadow-md p-2 bg-[#293441] flex flex-col col-span-4 xl:col-span-2">
 				<Chart class="w-full" height="400px" v-model="chartOptions" />
 			</div>
 
 			<!-- Result -->
-			<div class="rounded-md shadow-md p-2 bg-[#293441] flex flex-col md:flex-row gap-4 md:w-1/2">
+			<div class="rounded-md shadow-md p-2 bg-[#293441] flex flex-col col-span-4 xl:col-span-2">
 				<div class="overflow-x-auto md:overflow-x-hidden overflow-y-auto h-[400px] w-full">
 					<table class="table w-full">
 						<thead class="sticky">
