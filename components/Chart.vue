@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 import * as echarts from "echarts";
+import ChalkTheme from "./chart-chalk.json";
+
+echarts.registerTheme("dark", ChalkTheme);
 
 const props = defineProps({
 	modelValue: {
