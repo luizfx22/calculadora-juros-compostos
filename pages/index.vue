@@ -172,10 +172,6 @@ watch(
 	<div class="container mx-auto p-5">
 		<!-- Fields to calculate -->
 		<div class="p-4 bg-[#293441] rounded-md shadow-md grid grid-cols-5 gap-4">
-			<div class="col-span-5">
-				<h1 class="text-xl text-white">Calculadora de Juros Compostos</h1>
-			</div>
-
 			<div class="flex flex-col gap-2 col-span-3 md:col-span-2 lg:col-span-1">
 				<label for="vrInicial">Valor inicial</label>
 				<CurrencyInput class="input input-bordered w-full" v-model="formCalculadora.vrInicial" />
@@ -236,7 +232,7 @@ watch(
 			</div>
 
 			<!-- Result -->
-			<div class="rounded-md shadow-md p-2 bg-[#293441] flex flex-col col-span-4 xl:col-span-2">
+			<div class="rounded-md shadow-md p-4 bg-[#293441] flex flex-col col-span-4 xl:col-span-2">
 				<div class="overflow-x-auto md:overflow-x-hidden overflow-y-auto h-[400px] w-full">
 					<table class="table w-full">
 						<thead class="sticky">
